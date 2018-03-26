@@ -1,15 +1,22 @@
-import { post,get } from './request';
+/**
+ * IOT v1.0.0 (http://www.ito.com)
+ * Copyright 2017-2018 IOT, Inc.
 
-const URL = {
-  login:'http://rap2api.taobao.org/app/mock/8228/POST/login',
-  logout:'http://rap2api.taobao.org/app/mock/8228/POST/logout',
-  getMenu:'http://rap2api.taobao.org/app/mock/8228/GET/getMenu'
-}
+ * Created by 汉三.
+ * time   : 2018/3/26.
+ * Email  : 515124651@qq.com.
+ */
+import { post,get } from './request';
+import { iotUrl } from './url'
 
 export function postLogin(data){
-  return post(URL.login,data)
+  return post(iotUrl.loginUrl,data)
+}
+
+export function getLogout(){
+  return get(iotUrl.logoutUrl)
 }
 
 export function getMenu(){
-  return get(URL.getMenu)
+  return get(iotUrl.getMenuUrl)
 }

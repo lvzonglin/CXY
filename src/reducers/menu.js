@@ -1,3 +1,11 @@
+/**
+ * IOT v1.0.0 (http://www.ito.com)
+ * Copyright 2017-2018 IOT, Inc.
+
+ * Created by 汉三.
+ * time   : 2018/3/26.
+ * Email  : 515124651@qq.com.
+ */
 import _ from 'lodash';
 
 import { GET_ALL_MENU,GET_ALL_MENU_SUCCESS,UPDATE_NAVPATH } from '../actions/menu'
@@ -14,6 +22,7 @@ export default function menu(state=initialState,action={}){
     case UPDATE_NAVPATH:
       //todo 三级菜单没做
       let navpath = [],tmpOb,tmpKey,child;
+
       if(Array.isArray(action.payload.data)){
         if(Array.isArray(action.payload.data)){
           action.payload.data.reverse().map((item)=>{
@@ -44,7 +53,6 @@ export default function menu(state=initialState,action={}){
             }
           })
         }
-
         return Object.assign({}, state, {
           navpath: navpath
       	});

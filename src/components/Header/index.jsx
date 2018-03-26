@@ -1,3 +1,11 @@
+/**
+ * IOT v1.0.0 (http://www.ito.com)
+ * Copyright 2017-2018 IOT, Inc.
+
+ * Created by 汉三.
+ * time   : 2018/3/26.
+ * Email  : 515124651@qq.com.
+ */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link,withRouter } from 'react-router-dom';
@@ -12,14 +20,17 @@ class CommonHeader extends React.Component{
     super()
   }
 
-  handleLogout=()=>{
+  handleLogOut=()=>{
     const { logout } = this.props;
-    logout().payload.promise.then(()=>{
+    logout().payload.promise.then((res)=>{
       this.props.history.replace('/login')
+    }).catch((err)=>{
+
     })
   }
 
   render(){
+    //TODO 需要从服务器获取用户信息
     const { profile } = this.props;
 
     return (

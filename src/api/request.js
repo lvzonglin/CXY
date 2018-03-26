@@ -1,4 +1,13 @@
+/**
+ * IOT v1.0.0 (http://www.ito.com)
+ * Copyright 2017-2018 IOT, Inc.
+
+ * Created by 汉三.
+ * time   : 2018/3/26.
+ * Email  : 515124651@qq.com.
+ */
 import axios from 'axios';
+import queryString from 'query-string';
 
 //TODO 创建axios，前置参数暂没设置
 const normalAxios = axios.create();
@@ -23,9 +32,10 @@ const request = (method,url,data = {}) => {
         })
       }
     }).catch((err)=>{
-      if(err.response.status === 403){
-        return window.location.href = `${location.origin}/#/login`
-      }
+      // if(err.response.status === 403){
+      //   return window.location.href = `${location.origin}/#/login`
+      // }
+      console.log(err)
       reject({
         message: '服务器出现错误，请联系管理员！',
         err
@@ -35,8 +45,9 @@ const request = (method,url,data = {}) => {
 }
 
 //获取数据全用GET方法
-export function get(url){
-  return request('get',url)
+export function get(url,data){
+  const urlStr = queryString.stringify(data)
+  return request('get',`${url}?${urlStr}`)
 }
 
 //提交数据用POST方法

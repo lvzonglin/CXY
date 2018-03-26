@@ -1,9 +1,17 @@
+/**
+ * IOT v1.0.0 (http://www.ito.com)
+ * Copyright 2017-2018 IOT, Inc.
+
+ * Created by 汉三.
+ * time   : 2018/3/26.
+ * Email  : 515124651@qq.com.
+ */
 import React from 'react';
 import PropTypes from 'prop-types'
 import { withRouter,matchPath } from 'react-router';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Layout,Menu,Icon } from 'antd';
+import { Layout,Menu,Icon,Button } from 'antd';
 import { Link } from 'react-router-dom';
 import { getAllMenu,updateNavPath } from '../../actions/menu';
 
@@ -22,34 +30,61 @@ const propTypes = {
 const { Sider } = Layout;
 
 const isActive = (path,history) => {
+  //FIX 目前菜单只做了2级目录的处理  所以去前面耳机目录
+  var urlPath = history.location.pathname.split('/').splice(0,3).join('/')
   return matchPath(path,{
-    path:history.location.pathname,
+    path:urlPath,
     exact:true,
     strict:false
   })
 }
 
+//TODO，刷新页面菜单的激活项没做
 class Sidebar extends React.Component {
-  state = {
-    openKey   :'sub1',
-    activeKey :'menu101'
-  }
-
   constructor(props){
-    super(props)
+    super(props);
+    this.state = {
+      openKey   :'sub1',
+      isOpen    : false,
+      activeKey :'menu101',
+      collapsed : false
+    }
   }
 
   componentWillMount(){
     this.props.getAllMenu()
   }
 
-  componentWillReceiveProps(nextProps){
-    //todo
+  componentWillReceiveProps=(nextProps)=>{
+    Array.isArray(nextProps.items) && nextProps.items.map((item, i) => {
+      Array.isArray(item.child) && item.child.map((node) => {
+        if(node.url && isActive(node.url, this.props.history)){
+          this.menuClickHandle({
+            key     : 'menu'+node.key,
+            keyPath : ['menu'+node.key, 'sub'+item.key]
+          })
+        }
+      })
+    });
+  }
+
+  toggleCollapsed = () => {
+    this.setState({
+      collapsed : !this.state.collapsed
+    });
+  }
+
+  onOpenChange = (openKeys) =>{
+    this.setState({
+      isOpen:true,
+      openKey:openKeys[1]
+    })
   }
 
   menuClickHandle = (item) => {
     this.setState({
-      activeKey:item.key
+      activeKey:item.key,
+      isOpen:false
     })
 
     this.props.updateNavPath(item.keyPath,item.key)
@@ -57,13 +92,13 @@ class Sidebar extends React.Component {
 
   render(){
     const { items,updateNavPath,history } = this.props;
-    let   { activeKey,openKey } = this.state;
+    let   { activeKey,openKey,isOpen } = this.state;
 
     const _menuProcess = (nodes,pkey) => {
       return Array.isArray(nodes) && nodes.map((item,i)=>{
         const menu = _menuProcess(item.child,item.key);
-        
-        if(item.url && isActive(item.url,history)){
+
+        if(!isOpen && item.url && isActive(item.url,history)){
           activeKey = 'menu'+item.key,
           openKey   = 'sub' +pkey
         }
@@ -81,7 +116,9 @@ class Sidebar extends React.Component {
           return (
             <Menu.Item key={'menu'+item.key}>
               {
-                item.url ? <Link to={item.url}>{item.icon && <Icon type={item.icon} />}{item.name}</Link> : <span>{item.icon && <Icon type={item.icon} />}{item.name}</span>
+                item.url ?
+                  <Link to={item.url}>{item.icon && <Icon type={item.icon} />}{item.name}</Link> :
+                  <span>{item.icon && <Icon type={item.icon} />}{item.name}</span>
               }
             </Menu.Item>
           )
@@ -90,20 +127,27 @@ class Sidebar extends React.Component {
     }
 
     const menu = _menuProcess(items);
-
+    // console.log(activeKey)
+    // console.log(openKey)
     return (
-      <Sider
-        trigger={null}
-        >
+      /*collapsed={this.state.collapsed}*/
+      <Sider>
         <div className="iot-layout-logo">IOT</div>
           <Menu
-            mode="inline" theme="dark"
+            mode="inline"
+            theme="dark"
+            inlineCollapsed={this.state.collapsed}
             selectedKeys={[activeKey]}
-            defaultOpenKeys={[openKey]}
+            openKeys={[openKey]}
+            onOpenChange={this.onOpenChange}
             onClick={this.menuClickHandle}
           >
             {menu}
           </Menu>
+
+          <Button type="primary" onClick={this.toggleCollapsed} className="iot-sidebar-trigger">
+            <Icon type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'} />
+          </Button>
       </Sider>
     )
   }
