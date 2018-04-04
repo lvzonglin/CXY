@@ -50,7 +50,7 @@ class My extends Component{
 
     return (
       <div>
-        <Link to="/product/my/add">About</Link>
+        <Link to="/product/my/add">add</Link>
         <DataList {...listConfig}/>
       </div>
     )
