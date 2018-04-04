@@ -20,3 +20,11 @@ export function getLogout(){
 export function getMenu(){
   return get(iotUrl.getMenuUrl)
 }
+
+export function getIdentification(){
+  return get(iotUrl.getIdentification)
+}
+
+export function getClassify(){
+  return get(iotUrl.getClassify)
+}
